@@ -372,7 +372,7 @@ open_grid.o : ../../Modules/mp_global.o
 open_grid.o : ../../Modules/mp_world.o
 open_grid.o : ../../Modules/noncol.o
 open_grid.o : ../../Modules/parameters.o
-open_grid.o : ../../Modules/qes_types.o
+open_grid.o : ../../Modules/qes_types_module.o
 open_grid.o : ../../Modules/qexsd.o
 open_grid.o : ../../Modules/recvec.o
 open_grid.o : ../../Modules/wavefunctions.o

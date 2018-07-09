@@ -16,9 +16,6 @@ MODULE qes_types_module
   !
   IMPLICIT NONE
   !
-  PUBLIC 
-  PRIVATE   DP
-
   TYPE :: xml_format_type
     !
     CHARACTER(len=100) :: tagname
@@ -1319,4 +1316,3 @@ MODULE qes_types_module
   !
   !
 END MODULE qes_types_module
-
