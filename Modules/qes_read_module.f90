@@ -17,7 +17,89 @@ MODULE qes_read_module
   !
   IMPLICIT NONE
   !
-  PUBLIC
+  PUBLIC qes_read
+  !
+  INTERFACE qes_read
+    MODULE PROCEDURE qes_read_general_info
+    MODULE PROCEDURE qes_read_parallel_info
+    MODULE PROCEDURE qes_read_input
+    MODULE PROCEDURE qes_read_step
+    MODULE PROCEDURE qes_read_output
+    MODULE PROCEDURE qes_read_control_variables
+    MODULE PROCEDURE qes_read_xml_format
+    MODULE PROCEDURE qes_read_creator
+    MODULE PROCEDURE qes_read_created
+    MODULE PROCEDURE qes_read_atomic_species
+    MODULE PROCEDURE qes_read_species
+    MODULE PROCEDURE qes_read_atomic_structure
+    MODULE PROCEDURE qes_read_atomic_positions
+    MODULE PROCEDURE qes_read_atom
+    MODULE PROCEDURE qes_read_wyckoff_positions
+    MODULE PROCEDURE qes_read_cell
+    MODULE PROCEDURE qes_read_dft
+    MODULE PROCEDURE qes_read_hybrid
+    MODULE PROCEDURE qes_read_qpoint_grid
+    MODULE PROCEDURE qes_read_dftU
+    MODULE PROCEDURE qes_read_HubbardCommon
+    MODULE PROCEDURE qes_read_HubbardJ
+    MODULE PROCEDURE qes_read_starting_ns
+    MODULE PROCEDURE qes_read_Hubbard_ns
+    MODULE PROCEDURE qes_read_vdW
+    MODULE PROCEDURE qes_read_spin
+    MODULE PROCEDURE qes_read_bands
+    MODULE PROCEDURE qes_read_smearing
+    MODULE PROCEDURE qes_read_occupations
+    MODULE PROCEDURE qes_read_basis
+    MODULE PROCEDURE qes_read_basis_set
+    MODULE PROCEDURE qes_read_basisSetItem
+    MODULE PROCEDURE qes_read_reciprocal_lattice
+    MODULE PROCEDURE qes_read_electron_control
+    MODULE PROCEDURE qes_read_k_points_IBZ
+    MODULE PROCEDURE qes_read_monkhorst_pack
+    MODULE PROCEDURE qes_read_k_point
+    MODULE PROCEDURE qes_read_ion_control
+    MODULE PROCEDURE qes_read_bfgs
+    MODULE PROCEDURE qes_read_md
+    MODULE PROCEDURE qes_read_cell_control
+    MODULE PROCEDURE qes_read_symmetry_flags
+    MODULE PROCEDURE qes_read_boundary_conditions
+    MODULE PROCEDURE qes_read_esm
+    MODULE PROCEDURE qes_read_ekin_functional
+    MODULE PROCEDURE qes_read_spin_constraints
+    MODULE PROCEDURE qes_read_electric_field
+    MODULE PROCEDURE qes_read_gate_settings
+    MODULE PROCEDURE qes_read_atomic_constraints
+    MODULE PROCEDURE qes_read_atomic_constraint
+    MODULE PROCEDURE qes_read_inputOccupations
+    MODULE PROCEDURE qes_read_outputElectricField
+    MODULE PROCEDURE qes_read_BerryPhaseOutput
+    MODULE PROCEDURE qes_read_dipoleOutput
+    MODULE PROCEDURE qes_read_finiteFieldOut
+    MODULE PROCEDURE qes_read_polarization
+    MODULE PROCEDURE qes_read_ionicPolarization
+    MODULE PROCEDURE qes_read_electronicPolarization
+    MODULE PROCEDURE qes_read_phase
+    MODULE PROCEDURE qes_read_gateInfo
+    MODULE PROCEDURE qes_read_convergence_info
+    MODULE PROCEDURE qes_read_scf_conv
+    MODULE PROCEDURE qes_read_opt_conv
+    MODULE PROCEDURE qes_read_algorithmic_info
+    MODULE PROCEDURE qes_read_symmetries
+    MODULE PROCEDURE qes_read_symmetry
+    MODULE PROCEDURE qes_read_equivalent_atoms
+    MODULE PROCEDURE qes_read_info
+    MODULE PROCEDURE qes_read_outputPBC
+    MODULE PROCEDURE qes_read_magnetization
+    MODULE PROCEDURE qes_read_total_energy
+    MODULE PROCEDURE qes_read_band_structure
+    MODULE PROCEDURE qes_read_ks_energies
+    MODULE PROCEDURE qes_read_closed
+    MODULE PROCEDURE qes_read_vector
+    MODULE PROCEDURE qes_read_integerVector
+    MODULE PROCEDURE qes_read_matrix
+    MODULE PROCEDURE qes_read_integerMatrix
+    MODULE PROCEDURE qes_read_scalarQuantity
+  END INTERFACE qes_read
   !
   CONTAINS
   !

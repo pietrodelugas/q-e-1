@@ -462,13 +462,11 @@ CONTAINS
       !
       ALLOCATE(atom(nat))
       DO ia = 1, nat
-          CALL qes_init_atom( atom(ia), "atom", name=trim(atm(ityp(ia))), &
-                             position="", position_ispresent=.FALSE., &
-                             atom=tau(1:3,ia), index_ispresent = .TRUE.,&
-                             index = ia )
+          CALL qes_init ( atom(ia), "atom", NAME=trim(atm(ityp(ia))), &
+                             ATOM=tau(1:3,ia), INDEX = ia )
       ENDDO
       !
-      CALL qes_init_atomic_positions(atomic_pos, "atomic_positions", SIZE(atom), atom)
+      CALL qes_init (atomic_pos, "atomic_positions", atom)
       !
       DO ia = 1, nat
           CALL qes_reset_atom( atom(ia) )
@@ -477,15 +475,12 @@ CONTAINS
       !
       ! cell
       !
-      CALL qes_init_cell(cell, "cell", a1, a2, a3)
+      CALL qes_init (cell, "cell", a1, a2, a3)
       !
       ! global init
       !
-      CALL qes_init_atomic_structure(obj, "atomic_structure", nat=nat, &
-                     alat=alat, alat_ispresent=.TRUE., atomic_positions_ispresent=.TRUE., &
-                     atomic_positions=atomic_pos, wyckoff_positions_ispresent=.FALSE., &
-                     wyckoff_positions=wyckoff_pos, cell=cell ,& 
-                     bravais_index_ispresent = ibrav_ispresent, bravais_index=ibrav)
+      CALL qes_init (obj, "atomic_structure", nat=nat, ALAT=alat, ATOMIC_POSITIONS=atomic_pos, &
+                     CELL = cell , BRAVAIS_INDEX = ibrav)
       ! 
       ! cleanup 
       ! 
@@ -955,7 +950,7 @@ CONTAINS
     CHARACTER(LEN=*),INTENT(IN)                  :: assume_isolated
     CHARACTER(LEN=*),PARAMETER                   :: TAGNAME="boundary_conditions"
     !
-    CALL qes_init_outputPBC(obj,TAGNAME,ASSUME_ISOLATED =assume_isolated)
+    CALL qes_init (obj,TAGNAME,ASSUME_ISOLATED =assume_isolated)
     END SUBROUTINE qexsd_init_outputPBC
     !
     !
@@ -971,7 +966,7 @@ CONTAINS
       REAL(DP),        INTENT(IN) :: total_mag_nc(3)
       LOGICAL,         INTENT(IN) :: do_magnetization
       !
-      CALL qes_init_magnetization(obj, "magnetization", lsda, noncolin, spinorbit, total_mag, absolute_mag, &
+      CALL qes_init (obj, "magnetization", lsda, noncolin, spinorbit, total_mag, absolute_mag, &
                                  do_magnetization)
       !
     END SUBROUTINE qexsd_init_magnetization 
@@ -987,22 +982,21 @@ CONTAINS
     TYPE(band_structure_type)               :: obj
     CHARACTER(LEN=*), PARAMETER             :: TAGNAME="band_structure"
     LOGICAL,INTENT(IN)                      :: lsda, noncolin, lspinorb, occupations_are_fixed
-    INTEGER,INTENT(IN)                      :: nbnd_up, nbnd_dw, nks, n_wfc_at
-    REAL(DP),INTENT(IN)                     :: nelec, fermi_energy
+    INTEGER,INTENT(IN),OPTIONAL             :: nbnd, nbnd_up, nbnd_dw, nks, n_wfc_at
+    REAL(DP),INTENT(IN)                     :: nelec 
+    REAL(DP),INTENT(IN),OPTIONAL            :: fermi_energy, highestOccupiedLevel, lowestEmptyLevel
     REAL(DP),DIMENSION(:,:),INTENT(IN)      :: et, wg, xk
     REAL(DP),DIMENSION(:),INTENT(IN)        :: wk
     INTEGER,DIMENSION(:),INTENT(IN)         :: ngk      
-    REAL(DP),DIMENSION(2),INTENT(IN)        :: ef_updw 
-    LOGICAL,INTENT(IN)                      :: two_fermi_energies
+    REAL(DP),INTENT(IN),OPTIONAL            :: ef_updw(2) 
     TYPE(k_points_IBZ_type),INTENT(IN)      :: starting_kpoints
     TYPE(occupations_type), INTENT(IN)      :: occupation_kind
     TYPE(smearing_type),OPTIONAL,INTENT(IN) :: smearing
     LOGICAL,INTENT(IN)                      :: wf_collected                    
     ! 
-    LOGICAL                                 :: nbnd_up_ispresent, nbnd_dw_ispresent, &
-                                               fermi_energy_ispresent, HOL_ispresent, & 
-                                               n_wfc_at_ispresent = .TRUE.  
-    INTEGER                                 :: ndim_ks_energies, nbnd, ik
+    LOGICAL                                 :: two_fermi_energies
+    INTEGER,POINTER                         :: HOL_ => NULL() 
+    INTEGER                                 :: ndim_ks_energies, nbnd_, ik
     TYPE(k_point_type)                      :: kp_obj
     TYPE(ks_energies_type),ALLOCATABLE      :: ks_objs(:)
     TYPE (k_points_IBZ_type)                :: starting_k_points_
@@ -1012,29 +1006,19 @@ CONTAINS
     !
     !
     ndim_ks_energies=nks   
+    two_fermi_energies = PRESENT(ef_updw) 
     !
-    IF ( lsda ) THEN 
+    IF ( lsda .AND. PRESENT( nbnd_up) .AND. PRESENT( nbnd_dw) ) THEN 
        ndim_ks_energies=ndim_ks_energies/2
-       nbnd=nbnd_up+nbnd_dw
+       nbnd_=nbnd_up+nbnd_dw
        nbnd_up_ispresent=.true.
        nbnd_dw_ispresent=.true.
+    ELSE IF ( PRESENT( nbnd) ) THEN 
+       nbnd_=nbnd
     ELSE 
-       nbnd=nbnd_up
-       nbnd_up_ispresent=.false.
-       nbnd_dw_ispresent=.false. 
-    END IF 
-    IF (fermi_energy.GT.-1.D6 .AND. ( .NOT. two_fermi_energies ) ) THEN
-      IF ( occupations_are_fixed ) THEN 
-         fermi_energy_ispresent = .FALSE. 
-         HOL_ispresent = .TRUE. 
-      ELSE 
-         fermi_energy_ispresent = .TRUE.
-         HOL_ispresent = .FALSE. 
-      END IF 
-    ELSE 
-      fermi_energy_ispresent=.FALSE.
-      HOL_ispresent = .FALSE.
-    END IF  
+       CALL errore ( 'qexsd_init_band_structure:', 
+                     'check nbnd, nbnd_up, nbnd_dw arguments one of them is missing',1) 
+    END IF   
     !
     !   
     ALLOCATE(eigenvalues(nbnd),occupations(nbnd))
@@ -1042,7 +1026,7 @@ CONTAINS
     !  
     ks_objs%tagname="ks_energies"
     DO ik=1,ndim_ks_energies
-       CALL qes_init_k_point(kp_obj,"k_point",wk(ik),.true.,"",.FALSE., xk(:,ik))
+       CALL qes_init (kp_obj,"k_point", WEIGHT = wk(ik), K_POINT = xk(:,ik))
        IF ( lsda ) THEN 
           eigenvalues(1:nbnd_up)=et(1:nbnd_up,ik)/e2
           eigenvalues(nbnd_up+1:nbnd)=et(1:nbnd_dw,ndim_ks_energies+ik)/e2
@@ -1070,8 +1054,8 @@ CONTAINS
        !
        ks_objs(ik)%k_point = kp_obj
        ks_objs(ik)%npw = ngk(ik)
-       CALL  qes_init_vector(ks_objs(ik)%eigenvalues, "eigenvalues",eigenvalues)
-       CALL  qes_init_vector(ks_objs(ik)%occupations, "occupations",occupations)
+       CALL  qes_init (ks_objs(ik)%eigenvalues, "eigenvalues",eigenvalues)
+       CALL  qes_init (ks_objs(ik)%occupations, "occupations",occupations)
        !
        eigenvalues=0.d0
        occupations=0.d0
@@ -1088,7 +1072,7 @@ CONTAINS
     occupations_kind_  = occupation_kind
     occupations_kind_%tagname = "occupations_kind"
 ! 
-    CALL qes_init_band_structure( obj,TAGNAME,lsda,noncolin,lspinorb, nbnd, nbnd_up_ispresent,&
+    CALL qes_init ( obj,TAGNAME,lsda,noncolin,lspinorb, nbnd, nbnd_up_ispresent,&
                   nbnd_up,nbnd_dw_ispresent,nbnd_dw,nelec, n_wfc_at_ispresent, n_wfc_at, wf_collected, & 
                   fermi_energy_ispresent, fermi_energy/e2, HOL_ispresent, fermi_energy/e2,     &
                   two_fermi_energies, ef_updw/e2, starting_k_points_, ndim_ks_energies,      &
@@ -1119,10 +1103,10 @@ CONTAINS
     LOGICAL                         :: demet_ispresent
     CHARACTER(LEN=*),PARAMETER      :: TAGNAME="total_energy"
     ! 
-    CALL  qes_init_total_energy(obj,TAGNAME,etot, EBAND = eband , EHART = ehart, VTXC = vtxc,& 
+    CALL  qes_init (obj, TAGNAME, etot, EBAND = eband , EHART = ehart, VTXC = vtxc,& 
                                ETXC = etxc , EWALD = ewald, DEMET = demet, &
                                EFIELDCORR=electric_field_corr, POTENTIOSTAT_CONTR = potentiostat_contr,  & 
-                               GATE_CONTRIBUTION = gate_contribution )
+                               GATEFIELD_CONTR  = gate_contribution )
 
     END SUBROUTINE qexsd_init_total_energy
     ! 
@@ -1189,7 +1173,7 @@ CONTAINS
        USE kinds,           ONLY : DP
        USE constants,       ONLY : e2, fpi 
        USE qes_types_module,ONLY : dipoleOutput_type, scalarQuantity_type
-       USE qes_libs_module, ONLY : qes_init_scalarQuantity, qes_reset_scalarQuantity
+       USE qes_libs_module, ONLY : qes_init, qes_reset
        USE cell_base,       ONLY : alat, at, omega
        ! 
        IMPLICIT NONE  
@@ -1208,21 +1192,21 @@ CONTAINS
        dipole_info%tagname = "dipoleInfo"
        dipole_info%lwrite  = .TRUE.
        dipole_info%lread   = .TRUE.
-       CALL qes_init_scalarQuantity(dipole_info%ion_dipole,"ion_dipole" , units="Atomic Units", &
+       CALL qes_init (dipole_info%ion_dipole,"ion_dipole" , units="Atomic Units", &
                                     scalarQuantity= ion_dipole*fac)
-       CALL qes_init_scalarQuantity(dipole_info%elec_dipole,"elec_dipole" , units="Atomic Units",&
+       CALL qes_init (dipole_info%elec_dipole,"elec_dipole" , units="Atomic Units",&
                                      scalarQuantity= el_dipole*fac)
-       CALL qes_init_scalarQuantity(dipole_info%dipole,"dipole" , units="Atomic Units", &
+       CALL qes_init (dipole_info%dipole,"dipole" , units="Atomic Units", &
                                     scalarQuantity= tot_dipole*fac)
-       CALL qes_init_scalarQuantity(dipole_info%dipoleField,"dipoleField" , units="Atomic Units", &
+       CALL qes_init (dipole_info%dipoleField,"dipoleField" , units="Atomic Units", &
                                     scalarQuantity= tot_dipole)
        ! 
        length=(1._DP-eopreg)*(alat*SQRT(at(1,edir)**2+at(2,edir)**2+at(3,edir)**2))
        vamp=e2*(eamp-tot_dipole)*length
        !
-       CALL qes_init_scalarQuantity(dipole_info%potentialAmp,"potentialAmp" , units="Atomic Units",&
+       CALL qes_init (dipole_info%potentialAmp,"potentialAmp" , units="Atomic Units",&
                                      scalarQuantity= vamp)
-       CALL qes_init_scalarQuantity(dipole_info%totalLength, "totalLength", units = "Bohr",&
+       CALL qes_init (dipole_info%totalLength, "totalLength", units = "Bohr",&
                                      scalarQuantity = length )
   
     END SUBROUTINE qexsd_init_dipole_info
@@ -1261,7 +1245,7 @@ CONTAINS
        dipo_is = .TRUE.
        dip_loc_obj=dipole_obj
     END IF 
-    CALL  qes_init_outputElectricField(obj, TAGNAME, BerryPhase = bp_obj, &
+    CALL  qes_init ( obj, TAGNAME, BerryPhase = bp_obj, &
                                     finiteElectricFieldInfo  = finiteField_obj, &
                                     dipoleInfo = dipole_obj, &
                                     GATEINFO =  gateInfo   )
@@ -1392,8 +1376,7 @@ CONTAINS
     DO iat =1, nat 
        WRITE(mod_string,'("(mod" ,I1,")")') mod_ion(iat) 
        CALL qes_init_phase(ion_phase,"phase", 0.d0,.FALSE.,0.d0,.FALSE.,TRIM(mod_string),.TRUE., pdl_ion(iat) )
-       CALL qes_init_atom(atom_obj,"ion",name=TRIM(atm(ityp(iat))),position_ispresent=.FALSE.,atom = tau(:,iat), &
-                          index_ispresent = .FALSE.)
+       CALL qes_init(atom_obj,"ion",name=TRIM(atm(ityp(iat))), ATOM = tau(:,iat))
        CALL qes_init_ionicPolarization(ion_pol_obj(iat), "ionicPolarization", atom_obj, zv(ityp(iat)), ion_phase )       
        CALL qes_reset_phase(ion_phase)
        CALL qes_reset_atom(atom_obj)
@@ -1421,10 +1404,10 @@ CONTAINS
     CALL qes_init_phase(tot_phase, "totalPhase", pdl_ion_tot, .TRUE. , pdl_elec_tot, .TRUE., TRIM(mod_string), &
                         .TRUE., pdl_tot)
     ! 
-    CALL qes_init_scalarQuantity ( pol_val, "polarization", Units="e/bohr^2", scalarQuantity=(rmod/omega)*pdl_tot )
+    CALL qes_init ( pol_val, "polarization", Units="e/bohr^2", scalarQuantity=(rmod/omega)*pdl_tot )
     !
-    CALL qes_init_polarization(tot_pol_obj, "totalPolarization", pol_val, modulus = (rmod/omega)*dble(mod_tot), &
-                               direction = upol )  
+    CALL qes_init (tot_pol_obj, "totalPolarization", pol_val, MODULUS = (rmod/omega)*dble(mod_tot), &
+                               DIRECTION = upol )  
     ! 
     CALL qes_init_berryPhaseOutput( obj, TAGNAME, tot_pol_obj, tot_phase, nat, ion_pol_obj, nstring, str_pol_obj )
     ! 

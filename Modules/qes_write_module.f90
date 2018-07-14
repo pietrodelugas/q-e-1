@@ -18,6 +18,88 @@ MODULE qes_write_module
   !
   PUBLIC
   !
+  INTERFACE qes_write
+    MODULE PROCEDURE qes_write_general_info
+    MODULE PROCEDURE qes_write_parallel_info
+    MODULE PROCEDURE qes_write_input
+    MODULE PROCEDURE qes_write_step
+    MODULE PROCEDURE qes_write_output
+    MODULE PROCEDURE qes_write_control_variables
+    MODULE PROCEDURE qes_write_xml_format
+    MODULE PROCEDURE qes_write_creator
+    MODULE PROCEDURE qes_write_created
+    MODULE PROCEDURE qes_write_atomic_species
+    MODULE PROCEDURE qes_write_species
+    MODULE PROCEDURE qes_write_atomic_structure
+    MODULE PROCEDURE qes_write_atomic_positions
+    MODULE PROCEDURE qes_write_atom
+    MODULE PROCEDURE qes_write_wyckoff_positions
+    MODULE PROCEDURE qes_write_cell
+    MODULE PROCEDURE qes_write_dft
+    MODULE PROCEDURE qes_write_hybrid
+    MODULE PROCEDURE qes_write_qpoint_grid
+    MODULE PROCEDURE qes_write_dftU
+    MODULE PROCEDURE qes_write_HubbardCommon
+    MODULE PROCEDURE qes_write_HubbardJ
+    MODULE PROCEDURE qes_write_starting_ns
+    MODULE PROCEDURE qes_write_Hubbard_ns
+    MODULE PROCEDURE qes_write_vdW
+    MODULE PROCEDURE qes_write_spin
+    MODULE PROCEDURE qes_write_bands
+    MODULE PROCEDURE qes_write_smearing
+    MODULE PROCEDURE qes_write_occupations
+    MODULE PROCEDURE qes_write_basis
+    MODULE PROCEDURE qes_write_basis_set
+    MODULE PROCEDURE qes_write_basisSetItem
+    MODULE PROCEDURE qes_write_reciprocal_lattice
+    MODULE PROCEDURE qes_write_electron_control
+    MODULE PROCEDURE qes_write_k_points_IBZ
+    MODULE PROCEDURE qes_write_monkhorst_pack
+    MODULE PROCEDURE qes_write_k_point
+    MODULE PROCEDURE qes_write_ion_control
+    MODULE PROCEDURE qes_write_bfgs
+    MODULE PROCEDURE qes_write_md
+    MODULE PROCEDURE qes_write_cell_control
+    MODULE PROCEDURE qes_write_symmetry_flags
+    MODULE PROCEDURE qes_write_boundary_conditions
+    MODULE PROCEDURE qes_write_esm
+    MODULE PROCEDURE qes_write_ekin_functional
+    MODULE PROCEDURE qes_write_spin_constraints
+    MODULE PROCEDURE qes_write_electric_field
+    MODULE PROCEDURE qes_write_gate_settings
+    MODULE PROCEDURE qes_write_atomic_constraints
+    MODULE PROCEDURE qes_write_atomic_constraint
+    MODULE PROCEDURE qes_write_inputOccupations
+    MODULE PROCEDURE qes_write_outputElectricField
+    MODULE PROCEDURE qes_write_BerryPhaseOutput
+    MODULE PROCEDURE qes_write_dipoleOutput
+    MODULE PROCEDURE qes_write_finiteFieldOut
+    MODULE PROCEDURE qes_write_polarization
+    MODULE PROCEDURE qes_write_ionicPolarization
+    MODULE PROCEDURE qes_write_electronicPolarization
+    MODULE PROCEDURE qes_write_phase
+    MODULE PROCEDURE qes_write_gateInfo
+    MODULE PROCEDURE qes_write_convergence_info
+    MODULE PROCEDURE qes_write_scf_conv
+    MODULE PROCEDURE qes_write_opt_conv
+    MODULE PROCEDURE qes_write_algorithmic_info
+    MODULE PROCEDURE qes_write_symmetries
+    MODULE PROCEDURE qes_write_symmetry
+    MODULE PROCEDURE qes_write_equivalent_atoms
+    MODULE PROCEDURE qes_write_info
+    MODULE PROCEDURE qes_write_outputPBC
+    MODULE PROCEDURE qes_write_magnetization
+    MODULE PROCEDURE qes_write_total_energy
+    MODULE PROCEDURE qes_write_band_structure
+    MODULE PROCEDURE qes_write_ks_energies
+    MODULE PROCEDURE qes_write_closed
+    MODULE PROCEDURE qes_write_vector
+    MODULE PROCEDURE qes_write_integerVector
+    MODULE PROCEDURE qes_write_matrix
+    MODULE PROCEDURE qes_write_integerMatrix
+    MODULE PROCEDURE qes_write_scalarQuantity
+  END INTERFACE qes_write
+  !
   CONTAINS
   !
   

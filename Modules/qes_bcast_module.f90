@@ -13,11 +13,93 @@ MODULE qes_bcast_module
   !
   USE qes_types_module
   USE io_global, ONLY : ionode
-  USE mp,    ONLY : mp_bcast
+  USE mp, ONLY : mp_bcast
   !
   IMPLICIT NONE
   !
-  PUBLIC
+  PUBLIC qes_bcast
+  !
+  INTERFACE qes_bcast
+    MODULE PROCEDURE qes_bcast_general_info
+    MODULE PROCEDURE qes_bcast_parallel_info
+    MODULE PROCEDURE qes_bcast_input
+    MODULE PROCEDURE qes_bcast_step
+    MODULE PROCEDURE qes_bcast_output
+    MODULE PROCEDURE qes_bcast_control_variables
+    MODULE PROCEDURE qes_bcast_xml_format
+    MODULE PROCEDURE qes_bcast_creator
+    MODULE PROCEDURE qes_bcast_created
+    MODULE PROCEDURE qes_bcast_atomic_species
+    MODULE PROCEDURE qes_bcast_species
+    MODULE PROCEDURE qes_bcast_atomic_structure
+    MODULE PROCEDURE qes_bcast_atomic_positions
+    MODULE PROCEDURE qes_bcast_atom
+    MODULE PROCEDURE qes_bcast_wyckoff_positions
+    MODULE PROCEDURE qes_bcast_cell
+    MODULE PROCEDURE qes_bcast_dft
+    MODULE PROCEDURE qes_bcast_hybrid
+    MODULE PROCEDURE qes_bcast_qpoint_grid
+    MODULE PROCEDURE qes_bcast_dftU
+    MODULE PROCEDURE qes_bcast_HubbardCommon
+    MODULE PROCEDURE qes_bcast_HubbardJ
+    MODULE PROCEDURE qes_bcast_starting_ns
+    MODULE PROCEDURE qes_bcast_Hubbard_ns
+    MODULE PROCEDURE qes_bcast_vdW
+    MODULE PROCEDURE qes_bcast_spin
+    MODULE PROCEDURE qes_bcast_bands
+    MODULE PROCEDURE qes_bcast_smearing
+    MODULE PROCEDURE qes_bcast_occupations
+    MODULE PROCEDURE qes_bcast_basis
+    MODULE PROCEDURE qes_bcast_basis_set
+    MODULE PROCEDURE qes_bcast_basisSetItem
+    MODULE PROCEDURE qes_bcast_reciprocal_lattice
+    MODULE PROCEDURE qes_bcast_electron_control
+    MODULE PROCEDURE qes_bcast_k_points_IBZ
+    MODULE PROCEDURE qes_bcast_monkhorst_pack
+    MODULE PROCEDURE qes_bcast_k_point
+    MODULE PROCEDURE qes_bcast_ion_control
+    MODULE PROCEDURE qes_bcast_bfgs
+    MODULE PROCEDURE qes_bcast_md
+    MODULE PROCEDURE qes_bcast_cell_control
+    MODULE PROCEDURE qes_bcast_symmetry_flags
+    MODULE PROCEDURE qes_bcast_boundary_conditions
+    MODULE PROCEDURE qes_bcast_esm
+    MODULE PROCEDURE qes_bcast_ekin_functional
+    MODULE PROCEDURE qes_bcast_spin_constraints
+    MODULE PROCEDURE qes_bcast_electric_field
+    MODULE PROCEDURE qes_bcast_gate_settings
+    MODULE PROCEDURE qes_bcast_atomic_constraints
+    MODULE PROCEDURE qes_bcast_atomic_constraint
+    MODULE PROCEDURE qes_bcast_inputOccupations
+    MODULE PROCEDURE qes_bcast_outputElectricField
+    MODULE PROCEDURE qes_bcast_BerryPhaseOutput
+    MODULE PROCEDURE qes_bcast_dipoleOutput
+    MODULE PROCEDURE qes_bcast_finiteFieldOut
+    MODULE PROCEDURE qes_bcast_polarization
+    MODULE PROCEDURE qes_bcast_ionicPolarization
+    MODULE PROCEDURE qes_bcast_electronicPolarization
+    MODULE PROCEDURE qes_bcast_phase
+    MODULE PROCEDURE qes_bcast_gateInfo
+    MODULE PROCEDURE qes_bcast_convergence_info
+    MODULE PROCEDURE qes_bcast_scf_conv
+    MODULE PROCEDURE qes_bcast_opt_conv
+    MODULE PROCEDURE qes_bcast_algorithmic_info
+    MODULE PROCEDURE qes_bcast_symmetries
+    MODULE PROCEDURE qes_bcast_symmetry
+    MODULE PROCEDURE qes_bcast_equivalent_atoms
+    MODULE PROCEDURE qes_bcast_info
+    MODULE PROCEDURE qes_bcast_outputPBC
+    MODULE PROCEDURE qes_bcast_magnetization
+    MODULE PROCEDURE qes_bcast_total_energy
+    MODULE PROCEDURE qes_bcast_band_structure
+    MODULE PROCEDURE qes_bcast_ks_energies
+    MODULE PROCEDURE qes_bcast_closed
+    MODULE PROCEDURE qes_bcast_vector
+    MODULE PROCEDURE qes_bcast_integerVector
+    MODULE PROCEDURE qes_bcast_matrix
+    MODULE PROCEDURE qes_bcast_integerMatrix
+    MODULE PROCEDURE qes_bcast_scalarQuantity
+  END INTERFACE qes_bcast
   !
   CONTAINS
   !
