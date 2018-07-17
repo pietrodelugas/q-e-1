@@ -167,11 +167,11 @@ CONTAINS
       !
       CALL qexsd_init_general_info(general_info)
       CALL qes_write_general_info(qexsd_xf,general_info)
-      CALL qes_reset_general_info(general_info)
+      CALL qes_reset(general_info)
       !
       CALL qexsd_init_parallel_info(parallel_info)
       CALL qes_write_parallel_info(qexsd_xf,parallel_info)
-      CALL qes_reset_parallel_info(parallel_info) 
+      CALL qes_reset(parallel_info) 
       IF ( check_file_exst(input_xml_schema_file) )  THEN
          CALL xml_addComment( XF = qexsd_xf, &
                               COMMENT= "")
@@ -219,12 +219,12 @@ CONTAINS
       !
       CALL qes_init_xml_format(xml_fmt_obj, "xml_format", fmt_name, fmt_version, fmt_name//"_"//fmt_version)
       !
-      CALL qes_init_general_info( obj, TAGNAME, xml_fmt_obj, creator = creator_obj, created = created_obj,&
+      CALL qes_init( obj, TAGNAME, xml_fmt_obj, creator = creator_obj, created = created_obj,&
                                   job=title)
       !
-      CALL qes_reset_creator(creator_obj)
-      CALL qes_reset_created(created_obj)
-      CALL qes_reset_xml_format(xml_fmt_obj) 
+      CALL qes_reset(creator_obj)
+      CALL qes_reset(created_obj)
+      CALL qes_reset(xml_fmt_obj) 
     END SUBROUTINE qexsd_init_general_info    
     !
     !---------------------------------------------------------------------------------------------
@@ -365,8 +365,8 @@ CONTAINS
       !
       call qes_init_convergence_info(obj, "convergence_info", scf_conv, opt_conv_ispresent, opt_conv)
       !
-      call qes_reset_scf_conv(scf_conv)
-      call qes_reset_opt_conv(opt_conv)
+      call qes_reset(scf_conv)
+      call qes_reset(opt_conv)
       !
     END SUBROUTINE qexsd_init_convergence_info
     !
@@ -422,7 +422,7 @@ CONTAINS
       CALL qes_init_atomic_species(obj, "atomic_species", nsp, SIZE(species), species)
       !
       DO i = 1, nsp
-          CALL qes_reset_species(species(i))
+          CALL qes_reset(species(i))
       ENDDO
       DEALLOCATE(species)
       !
@@ -469,7 +469,7 @@ CONTAINS
       CALL qes_init (atomic_pos, "atomic_positions", atom)
       !
       DO ia = 1, nat
-          CALL qes_reset_atom( atom(ia) )
+          CALL qes_reset( atom(ia) )
       ENDDO
       DEALLOCATE(atom)
       !
@@ -484,8 +484,8 @@ CONTAINS
       ! 
       ! cleanup 
       ! 
-      CALL qes_reset_atomic_positions(atomic_pos)
-      CALL qes_reset_cell(cell)
+      CALL qes_reset(atomic_pos)
+      CALL qes_reset(cell)
       !
     END SUBROUTINE qexsd_init_atomic_structure
     !
@@ -534,35 +534,32 @@ CONTAINS
                              INFO= TRIM(la_info) )
           !
           mat_ = real(s(:,:,i),DP)
-          CALL qes_init_matrix(matrix, "rotation", DIMS=[3,3], mat=mat_ )
+          CALL qes_init(matrix, "rotation", dims=[3,3], mat=mat_ )
           !
           IF ( i .LE. nsym ) THEN 
-             CALL qes_init_equivalent_atoms(equiv_atm, "equivalent_atoms", nat=nat, index_list=irt(i,1:nat)  )
+             CALL qes_init(equiv_atm, "equivalent_atoms", nat=nat, equivalent_atoms=irt(i,1:nat)  )
           !
-             CALL qes_init_symmetry(symm(i),"symmetry", info=info, rotation=matrix, &
-                                 fractional_translation_ispresent=.TRUE., fractional_translation=ft(:,i), &
-                                 equivalent_atoms_ispresent=.TRUE., equivalent_atoms=equiv_atm)
+             CALL qes_init(symm(i),"symmetry", info=info, rotation=matrix, &
+                                 fractional_translation=ft(:,i), equivalent_atoms=equiv_atm)
           ELSE 
-             CALL qes_init_symmetry ( symm(i), "symmetry", INFO = info, ROTATION = matrix, &
-                                      FRACTIONAL_TRANSLATION_ISPRESENT = .FALSE., FRACTIONAL_TRANSLATION=ft(:,i), &
-                                      EQUIVALENT_ATOMS_ISPRESENT = .FALSE.,  EQUIVALENT_ATOMS=equiv_atm) 
+             CALL qes_init( symm(i), "symmetry", info=info, rotation=matrix) 
           END IF
           !
-          CALL qes_reset_info(info)
-          CALL qes_reset_matrix(matrix)
+          CALL qes_reset(info)
+          CALL qes_reset(matrix)
           IF ( i .LT. nsym ) THEN 
-             CALL qes_reset_equivalent_atoms( equiv_atm )
+             CALL qes_reset( equiv_atm )
           ELSE IF ( i .EQ. nrot ) THEN  
-            CALL qes_reset_equivalent_atoms( equiv_atm )
+            CALL qes_reset( equiv_atm )
           END IF
           !
       ENDDO
       !
-      CALL qes_init_symmetries(obj,"symmetries",NSYM = nsym, NROT=nrot, SPACE_GROUP = space_group, &
-                               NDIM_SYMMETRY=SIZE(symm), SYMMETRY=symm )
+      CALL qes_init(obj,"symmetries",NSYM = nsym, NROT=nrot, SPACE_GROUP = space_group, &
+                               SYMMETRY=symm )
       !
       DO i = 1, nsym
-         CALL qes_reset_symmetry(symm(i))
+         CALL qes_reset(symm(i))
       ENDDO
       DEALLOCATE(symm)
       !
@@ -603,10 +600,10 @@ CONTAINS
                               FFT_BOX_ISPRESENT=fft_box_ispresent, FFT_BOX=fft_box, NGM=ngm, &
                               NGMS_ISPRESENT=.TRUE., NGMS=ngms, NPWX=npwx, RECIPROCAL_LATTICE=recipr_latt )
       !
-      CALL qes_reset_basisSetItem(fft_grid)
-      CALL qes_reset_basisSetItem(fft_smooth)
-      CALL qes_reset_basisSetItem(fft_box)
-      CALL qes_reset_reciprocal_lattice(recipr_latt)
+      CALL qes_reset(fft_grid)
+      CALL qes_reset(fft_smooth)
+      CALL qes_reset(fft_box)
+      CALL qes_reset(recipr_latt)
       !
     END SUBROUTINE qexsd_init_basis_set
     !
@@ -702,7 +699,7 @@ CONTAINS
           CALL qes_init_hybrid(hybrid, "hybrid", qpoint_grid, ecutfock, exx_fraction, &
                                screening_parameter, exxdiv_treatment, x_gamma_extrapolation, ecutvcut)
           !
-          CALL qes_reset_qpoint_grid(qpoint_grid)
+          CALL qes_reset(qpoint_grid)
           !
       ENDIF
       !
@@ -836,11 +833,11 @@ CONTAINS
                               .TRUE., U_projection_type)
           !
           DO i = 1, nsp
-              CALL qes_reset_HubbardCommon(Hubbard_U_(i))
-              CALL qes_reset_HubbardCommon(Hubbard_J0_(i))
-              CALL qes_reset_HubbardCommon(Hubbard_alpha_(i))
-              CALL qes_reset_HubbardCommon(Hubbard_beta_(i))
-              CALL qes_reset_HubbardJ(Hubbard_J_(i))
+              CALL qes_reset(Hubbard_U_(i))
+              CALL qes_reset(Hubbard_J0_(i))
+              CALL qes_reset(Hubbard_alpha_(i))
+              CALL qes_reset(Hubbard_beta_(i))
+              CALL qes_reset(Hubbard_J_(i))
           ENDDO
           !
           DEALLOCATE(Hubbard_U_)
@@ -850,12 +847,12 @@ CONTAINS
           DEALLOCATE(Hubbard_J_)
           !
           DO i = 1, SIZE(starting_ns_)
-              CALL qes_reset_starting_ns(starting_ns_(i))
+              CALL qes_reset(starting_ns_(i))
           ENDDO
           DEALLOCATE(starting_ns_)
           !
           DO i = 1, SIZE(Hubbard_ns_)
-              CALL qes_reset_Hubbard_ns(Hubbard_ns_(i))
+              CALL qes_reset(Hubbard_ns_(i))
           ENDDO
           DEALLOCATE(Hubbard_ns_)
           !
@@ -925,7 +922,7 @@ CONTAINS
           !
           IF (london_c6_ispresent )   THEN
              DO isp=1, ndim_london_c6
-                CALL qes_reset_hubbardcommon(london_c6_obj(isp))
+                CALL qes_reset(london_c6_obj(isp))
              END DO 
           END IF
           DEALLOCATE ( london_c6_obj) 
@@ -934,9 +931,9 @@ CONTAINS
       CALL qes_init_dft(obj, "dft", functional, dft_is_hybrid, hybrid, &
                              dft_is_lda_plus_U, dftU, (dft_is_vdW .OR. empirical_vdw) , vdW)
       !
-      IF (dft_is_hybrid)      CALL qes_reset_hybrid(hybrid)
-      IF (dft_is_lda_plus_U)  CALL qes_reset_dftU(dftU)
-      IF (dft_is_vdW .OR. empirical_vdw )  CALL qes_reset_vdW(vdW)
+      IF (dft_is_hybrid)      CALL qes_reset(hybrid)
+      IF (dft_is_lda_plus_U)  CALL qes_reset(dftU)
+      IF (dft_is_vdW .OR. empirical_vdw )  CALL qes_reset(vdW)
       !
     END SUBROUTINE qexsd_init_dft
     !
@@ -1016,7 +1013,7 @@ CONTAINS
     ELSE IF ( PRESENT( nbnd) ) THEN 
        nbnd_=nbnd
     ELSE 
-       CALL errore ( 'qexsd_init_band_structure:', 
+       CALL errore ( 'qexsd_init_band_structure:', &
                      'check nbnd, nbnd_up, nbnd_dw arguments one of them is missing',1) 
     END IF   
     !
@@ -1059,7 +1056,7 @@ CONTAINS
        !
        eigenvalues=0.d0
        occupations=0.d0
-       CALL qes_reset_k_point(kp_obj)  
+       CALL qes_reset(kp_obj)  
     END DO 
     ks_objs%lwrite = .TRUE.
     ks_objs%lread  = .TRUE.
@@ -1078,9 +1075,9 @@ CONTAINS
                   two_fermi_energies, ef_updw/e2, starting_k_points_, ndim_ks_energies,      &
                   occupations_kind_, PRESENT(smearing), smearing_, ndim_ks_energies, ks_objs )
     DO ik=1,ndim_ks_energies
-       CALL qes_reset_ks_energies(ks_objs(ik))
+       CALL qes_reset(ks_objs(ik))
     END DO
-    CALL qes_reset_k_points_IBZ ( starting_k_points_ ) 
+    CALL qes_reset( starting_k_points_ ) 
     DEALLOCATE (ks_objs,eigenvalues,occupations)
     END SUBROUTINE qexsd_init_band_structure 
     !
@@ -1249,7 +1246,7 @@ CONTAINS
                                     finiteElectricFieldInfo  = finiteField_obj, &
                                     dipoleInfo = dipole_obj, &
                                     GATEINFO =  gateInfo   )
-    IF ( finfield_is) CALL qes_reset_finiteFieldOut( finiteField_obj) 
+    IF ( finfield_is) CALL qes_reset( finiteField_obj) 
     !
     END SUBROUTINE qexsd_init_outputElectricField
     ! 
@@ -1289,25 +1286,25 @@ CONTAINS
     CALL qes_init_scf_conv( scf_conv_obj,"scf_conv", n_scf_steps, scf_error )
     !
     step_obj%scf_conv = scf_conv_obj 
-    CALL qes_reset_scf_conv(scf_conv_obj)
+    CALL qes_reset(scf_conv_obj)
     ! 
     CALL qexsd_init_atomic_structure(atomic_struct_obj, ntyp, atm, ityp, nat, tau, &
                                      alat, a1, a2, a3, 0)
     step_obj%atomic_structure=atomic_struct_obj
-    CALL qes_reset_atomic_structure( atomic_struct_obj )
+    CALL qes_reset( atomic_struct_obj )
     ! 
     CALL qexsd_init_total_energy (tot_en_obj, etot, eband, ehart, &
           vtxc, etxc, ewald, degauss, demet, efieldcorr, potstat_contr, gatefield_en)  
     step_obj%total_energy=tot_en_obj
-    CALL qes_reset_total_energy( tot_en_obj )
+    CALL qes_reset( tot_en_obj )
     ! 
     CALL  qes_init_matrix( mat_forces, "forces", [3, nat], forces ) 
     step_obj%forces=mat_forces
-    CALL qes_reset_matrix ( mat_forces )
+    CALL qes_reset( mat_forces )
     ! 
     CALL qes_init_matrix( mat_stress, "stress", [3, 3], stress ) 
     step_obj%stress = mat_stress
-    CALL qes_reset_matrix ( mat_stress ) 
+    CALL qes_reset( mat_stress ) 
     IF ( PRESENT ( fcp_force ) ) THEN 
        step_obj%FCP_force = fcp_force
        step_obj%FCP_force_ispresent = .TRUE.
@@ -1321,7 +1318,7 @@ CONTAINS
     steps(step_counter) = step_obj
     steps(step_counter)%lwrite  = .TRUE.
     steps(step_counter)%lread   = .TRUE. 
-    call qes_reset_step(step_obj)
+    call qes_reset(step_obj)
     END SUBROUTINE qexsd_step_addstep 
     !
     !------------------------------------------------------------------------------------
@@ -1330,7 +1327,7 @@ CONTAINS
        INTEGER  :: i_step
        IF (ALLOCATED(steps)) THEN
           DO i_step =1, SIZE(steps) 
-            CALL qes_reset_step(steps(i_step))
+            CALL qes_reset(steps(i_step))
           END DO
           DEALLOCATE (steps)
       END IF
@@ -1378,8 +1375,8 @@ CONTAINS
        CALL qes_init_phase(ion_phase,"phase", 0.d0,.FALSE.,0.d0,.FALSE.,TRIM(mod_string),.TRUE., pdl_ion(iat) )
        CALL qes_init(atom_obj,"ion",name=TRIM(atm(ityp(iat))), ATOM = tau(:,iat))
        CALL qes_init_ionicPolarization(ion_pol_obj(iat), "ionicPolarization", atom_obj, zv(ityp(iat)), ion_phase )       
-       CALL qes_reset_phase(ion_phase)
-       CALL qes_reset_atom(atom_obj)
+       CALL qes_reset(ion_phase)
+       CALL qes_reset(atom_obj)
     END DO
     ! 
     IF ( nspin_lsda .EQ. 2 ) spin_is  = .TRUE.
@@ -1396,8 +1393,8 @@ CONTAINS
         CALL qes_init_k_point(kp_obj, "firstKeyPoint", wstring(istring), .TRUE., "",.FALSE., xk(:,indstring))
         CALL qes_init_electronicPolarization(str_pol_obj(istring),"electronicPolarization", kp_obj, spin_is, ispin, &
                                              el_phase )
-        CALL qes_reset_phase ( el_phase ) 
-        CALL qes_reset_k_point(kp_obj)
+        CALL qes_reset( el_phase ) 
+        CALL qes_reset(kp_obj)
     END DO
     ! 
     WRITE(mod_string,'("(mod ",I1,")")') mod_tot
@@ -1412,16 +1409,16 @@ CONTAINS
     CALL qes_init_berryPhaseOutput( obj, TAGNAME, tot_pol_obj, tot_phase, nat, ion_pol_obj, nstring, str_pol_obj )
     ! 
     DO istring=1,nstring     
-       CALL  qes_reset_electronicPolarization(str_pol_obj(istring))
+       CALL  qes_reset(str_pol_obj(istring))
     END DO 
     DEALLOCATE (str_pol_obj)
     DO iat=1, nat
-       CALL qes_reset_ionicPolarization(ion_pol_obj(iat))
+       CALL qes_reset(ion_pol_obj(iat))
     END DO
     DEALLOCATE (ion_pol_obj)
-    CALL qes_reset_polarization(tot_pol_obj)
-    CALL qes_reset_scalarQuantity(pol_val)
-    CALL qes_reset_phase(tot_phase) 
+    CALL qes_reset(tot_pol_obj)
+    CALL qes_reset(pol_val)
+    CALL qes_reset(tot_phase) 
     !
     END SUBROUTINE qexsd_init_berryPhaseOutput
     !
