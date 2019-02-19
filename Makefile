@@ -38,7 +38,7 @@ default :
 	@echo '  test-suite   run semi-automated test-suite for regression testing'
 	@echo '  all          same as "make pwall cp ld1 upf tddfpt hp"'
 	@echo '  postqe_libs  creates POSTQE_LIBS directory containing compiled files needed by postqe'
-	@echo '  clean_postqe_libs removes POSTQE_LIBS directrory' 
+	@echo '  clean_postqe  removes POSTQE_LIBS directrory' 
 	@echo ' '
 	@echo 'where target identifies one or multiple THIRD-PARTIES PACKAGES:'
 	@echo '  gipaw        NMR and EPR spectra'
@@ -109,7 +109,7 @@ postqe_libs : pwlibs
 	cp -pu ./PW/src/libpw.a ./POSTQE_LIBS  
 	cp -pu ./UtilXlib/libutil.a ./POSTQE_LIBS   
 	cp -pu ./Modules/*.mod ./POSTQE_LIBS 
-clean_postqe_libs :
+clean_postqe  : clean 
 	if test -d POSTQE_LIBS ; then \
 		(rm -fr POSTQE_LIBS); fi 
 pwcond : pwlibs
@@ -347,7 +347,7 @@ clean :
 	- /bin/rm -rf bin/*.x tempdir
 
 # remove files produced by "configure" as well
-veryclean :  clean_postqe_libs  clean 
+veryclean :  clean 
 	- @(cd install ; $(MAKE) -f plugins_makefile veryclean)
 	- @(cd install ; $(MAKE) -f extlibs_makefile veryclean)
 	- rm -rf install/patch-plumed
@@ -360,7 +360,7 @@ veryclean :  clean_postqe_libs  clean
 	- rm -rf make.inc -
 	- rm -rf FoX
 # remove everything not in the original distribution
-distclean : veryclean
+distclean : clean_postqe veryclean
 	- cd pseudo; ./clean_ps ; cd -
 	( cd install ; $(MAKE) -f plugins_makefile $@ || exit 1 )
 
