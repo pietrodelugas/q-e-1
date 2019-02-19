@@ -37,6 +37,8 @@ default :
 	@echo '  examples     fetch from web examples for all core packages'
 	@echo '  test-suite   run semi-automated test-suite for regression testing'
 	@echo '  all          same as "make pwall cp ld1 upf tddfpt hp"'
+	@echo '  postqe_libs  creates POSTQE_LIBS directory containing compiled files needed by postqe'
+	@echo '  clean_postqe_libs removes POSTQE_LIBS directrory' 
 	@echo ' '
 	@echo 'where target identifies one or multiple THIRD-PARTIES PACKAGES:'
 	@echo '  gipaw        NMR and EPR spectra'
@@ -98,6 +100,18 @@ pp : pwlibs
 	if test -d PP ; then \
 	( cd PP ; $(MAKE) TLDEPS= all || exit 1 ) ; fi
 
+postqe_libs : pwlibs
+	if !(test -d POSTQE_LIBS) ; then \
+		(mkdir POSTQE_LIBS); fi   
+	cp -pu ./clib/*.o  ./POSTQE_LIBS     
+	cp -pu ./Modules/libqemod.a ./POSTQE_LIBS  
+	cp -pu ./FFTXlib/libqefft.a ./POSTQE_LIBS
+	cp -pu ./PW/src/libpw.a ./POSTQE_LIBS  
+	cp -pu ./UtilXlib/libutil.a ./POSTQE_LIBS   
+	cp -pu ./Modules/*.mod ./POSTQE_LIBS 
+clean_postqe_libs :
+	if test -d POSTQE_LIBS ; then \
+		(rm -fr POSTQE_LIBS); fi 
 pwcond : pwlibs
 	if test -d PWCOND ; then \
 	( cd PWCOND ; $(MAKE) TLDEPS= all || exit 1 ) ; fi
@@ -333,7 +347,7 @@ clean :
 	- /bin/rm -rf bin/*.x tempdir
 
 # remove files produced by "configure" as well
-veryclean : clean
+veryclean :  clean_postqe_libs  clean 
 	- @(cd install ; $(MAKE) -f plugins_makefile veryclean)
 	- @(cd install ; $(MAKE) -f extlibs_makefile veryclean)
 	- rm -rf install/patch-plumed
